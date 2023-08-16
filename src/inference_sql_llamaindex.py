@@ -9,7 +9,7 @@ from .common import (
     output_vol,
     stub,
     VOL_MOUNT_PATH,
-    user_model_path,
+    get_model_path,
     generate_prompt_sql
 )
 
@@ -36,7 +36,6 @@ class OpenLlamaLLM(CustomLLM, ClsMixin):
    
     def __init__(
         self, 
-        user: str, 
         max_new_tokens: int = 128,
         callback_manager: Optional[CallbackManager] = None,
         use_finetuned_model: bool = True,
@@ -49,8 +48,7 @@ class OpenLlamaLLM(CustomLLM, ClsMixin):
         from peft import PeftModel
         from transformers import LlamaForCausalLM, LlamaTokenizer
 
-        self.user = user
-        CHECKPOINT = user_model_path(self.user)
+        CHECKPOINT = get_model_path()
 
         load_8bit = False
         device = "cuda"
@@ -135,7 +133,7 @@ class OpenLlamaLLM(CustomLLM, ClsMixin):
     network_file_systems={VOL_MOUNT_PATH.as_posix(): output_vol},
     cloud="gcp",
 )
-def run_query(user: str, query: str, use_finetuned_model: bool = True):
+def run_query(query: str, use_finetuned_model: bool = True):
     """Run query."""
     import pandas as pd
     from sqlalchemy import create_engine
@@ -150,17 +148,9 @@ def run_query(user: str, query: str, use_finetuned_model: bool = True):
     # finetuned llama LLM
     num_output = 256
     llm = OpenLlamaLLM(
-        user=user, max_new_tokens=num_output, use_finetuned_model=use_finetuned_model
+        max_new_tokens=num_output, use_finetuned_model=use_finetuned_model
     )
-    # # default Llama LLM (load from our huggingface loader)
-    # default_llm = HuggingFaceLLM(
-    #     context_window=2048,
-    #     max_new_tokens=num_output,
-    #     tokenizer_name="openlm-research/open_llama_7b",
-    #     model_name="openlm-research/open_llama_7b"
-    # )
     service_context = ServiceContext.from_defaults(llm=llm)
-    # default_service_context = ServiceContext.from_defaults(llm=default_llm)
 
     sql_path = VOL_MOUNT_PATH / "test_data.db"
     engine = create_engine(f'sqlite:///{sql_path}', echo=True)
@@ -168,7 +158,7 @@ def run_query(user: str, query: str, use_finetuned_model: bool = True):
 
     # define custom text-to-SQL prompt with generate prompt
     prompt_prefix = "Dialect: {dialect}\n\n"
-    prompt_suffix = generate_prompt_sql(user, "{query_str}", "{schema}", output="")
+    prompt_suffix = generate_prompt_sql("{query_str}", "{schema}", output="")
     sql_prompt = Prompt(prompt_prefix + prompt_suffix)
 
     query_engine = NLSQLTableQueryEngine(
@@ -179,21 +169,12 @@ def run_query(user: str, query: str, use_finetuned_model: bool = True):
     )
     response = query_engine.query(query)
 
-    # # give baseline response too
-    # default_query_engine = NLSQLTableQueryEngine(
-    #     sql_database, 
-    #     text_to_sql_prompt=sql_prompt,
-    #     service_context=default_service_context,
-    #     synthesize_response=False
-    # )
-    # default_response = default_query_engine.query(query)
-
     print(f'Model output: {str(response.metadata["sql_query"])}')
 
     return response
 
 @stub.local_entrypoint()
-def main(user: str, query: str, sqlite_file_path: str, use_finetuned_model: Optional[bool] = None):
+def main(query: str, sqlite_file_path: str, use_finetuned_model: Optional[bool] = None):
     """Main function."""
 
     fp = open(sqlite_file_path, "rb")
@@ -201,7 +182,7 @@ def main(user: str, query: str, sqlite_file_path: str, use_finetuned_model: Opti
 
     if use_finetuned_model is None:
         # try both
-        run_query.call(user, query, use_finetuned_model=True)
-        run_query.call(user, query, use_finetuned_model=False)
+        run_query.call(query, use_finetuned_model=True)
+        run_query.call(query, use_finetuned_model=False)
     else:
-        run_query.call(user, query, use_finetuned_model=use_finetuned_model)
+        run_query.call(query, use_finetuned_model=use_finetuned_model)

@@ -9,8 +9,8 @@ from .common import (
     WANDB_PROJECT,
     output_vol,
     stub,
-    user_data_path,
-    user_model_path,
+    get_data_path,
+    get_model_path,
     generate_prompt_sql,
 )
 
@@ -121,28 +121,13 @@ def _train(
 
     def generate_and_tokenize_prompt(data_point):
         full_prompt = generate_prompt_sql(
-            data_point["user"],
             data_point["input"],
             data_point["context"],
             data_point["output"],
         )
         tokenized_full_prompt = tokenize(full_prompt)
-        # tokens = tokenizer.convert_ids_to_tokens(
-        #     tokenized_full_prompt["input_ids"]
-        # )
-        # print(data_point, tokens)
         if not train_on_inputs:
             raise NotImplementedError("not implemented yet")
-            # user_prompt = generate_prompt(data_point["instruction"], data_point["input"])
-            # tokenized_user_prompt = tokenize(user_prompt, add_eos_token=add_eos_token)
-            # user_prompt_len = len(tokenized_user_prompt["input_ids"])
-
-            # if add_eos_token:
-            #     user_prompt_len -= 1
-
-            # tokenized_full_prompt["labels"] = [-100] * user_prompt_len + tokenized_full_prompt["labels"][
-            #     user_prompt_len:
-            # ]  # could be sped up, probably
         return tokenized_full_prompt
 
     model = prepare_model_for_int8_training(model)
@@ -243,10 +228,10 @@ def _train(
     cloud="oci",
     allow_cross_region_volumes=True,
 )
-def finetune(user: str, team_id: str = ""):
+def finetune(team_id: str = ""):
     from datasets import load_dataset
 
-    data_path = user_data_path(user).as_posix()
+    data_path = get_data_path().as_posix()
     data = load_dataset("json", data_files=data_path)
 
     num_samples = len(data["train"])
@@ -257,9 +242,9 @@ def finetune(user: str, team_id: str = ""):
         MODEL_PATH,
         data,
         val_set_size=val_set_size,
-        output_dir=user_model_path(user).as_posix(),
+        output_dir=get_model_path().as_posix(),
         wandb_project=WANDB_PROJECT,
-        wandb_run_name=f"openllama-{team_id}-{user}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",
+        wandb_run_name=f"openllama-{team_id}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",
     )
 
     # Delete scraped data after fine-tuning

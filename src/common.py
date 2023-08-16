@@ -57,8 +57,8 @@ stub.data_dict = Dict.new()
 output_vol = NetworkFileSystem.new(cloud="gcp").persisted("doppelbot-vol")
 
 
-def generate_prompt_sql(user, input, context, output=""):
-    return f"""You are {user}, a powerful text-to-SQL model. Your job is to answer questions about a database. You are given a question and context regarding one or more tables. 
+def generate_prompt_sql(input, context, output=""):
+    return f"""You are a powerful text-to-SQL model. Your job is to answer questions about a database. You are given a question and context regarding one or more tables. 
 
 You must output the SQL query that answers the question.
 
@@ -72,25 +72,11 @@ You must output the SQL query that answers the question.
 {output}"""
 
 
-def user_data_path(user: str, data_dir: str = "data_sql") -> Path:
-    return VOL_MOUNT_PATH / data_dir / user / "data_sql.jsonl"
+def get_data_path(data_dir: str = "data_sql") -> Path:
+    return VOL_MOUNT_PATH / data_dir / "data_sql.jsonl"
 
-def user_model_path(user: str, data_dir: str = "data_sql", checkpoint: Optional[str] = None) -> Path:
-    path = VOL_MOUNT_PATH / data_dir / user
+def get_model_path(data_dir: str = "data_sql", checkpoint: Optional[str] = None) -> Path:
+    path = VOL_MOUNT_PATH / data_dir
     if checkpoint:
         path = path / checkpoint
     return path
-
-def get_user_for_team_id(team_id: Optional[str], users: list[str]) -> Optional[str]:
-    # Dumb: for now, we only allow one user per team.
-    path = VOL_MOUNT_PATH / (team_id or "data")
-    filtered = []
-    for p in path.iterdir():
-        # Check if finished fine-tuning.
-        if (path / p / "adapter_config.json").exists() and p.name in users:
-            filtered.append(p.name)
-    if not filtered:
-        return None
-    user = random.choice(filtered)
-    print(f"Randomly picked {user} out of {filtered}.")
-    return user

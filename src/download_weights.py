@@ -1,9 +1,7 @@
 """Download weights."""
 
-from modal import Image, Stub
-
 from .common import (
-    stub, output_vol, VOL_MOUNT_PATH, user_data_path, user_model_path
+    stub, output_vol, VOL_MOUNT_PATH, get_model_path
 )
 import os
 import json
@@ -13,9 +11,9 @@ from pathlib import Path
     network_file_systems={VOL_MOUNT_PATH.as_posix(): output_vol},
     cloud="gcp"
 )
-def load_model(user: str):
+def load_model():
     """Load model."""
-    path = user_model_path(user)
+    path = get_model_path()
     config_path = path / "adapter_config.json"
     model_path = path / "adapter_model.bin"
 
@@ -30,9 +28,9 @@ def load_model(user: str):
         stub.model_dict["model"] = model_data
 
 @stub.local_entrypoint()
-def main(user: str, output_dir: str):
+def main(output_dir: str):
     # copy adapter_config.json and adapter_model.bin files into dict
-    load_model.call(user=user)
+    load_model.call()
     model_data = stub.model_dict["model"]
     config_data = stub.model_dict["config"]
 
