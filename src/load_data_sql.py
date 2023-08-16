@@ -18,13 +18,13 @@ from .common import (
     network_file_systems={VOL_MOUNT_PATH.as_posix(): output_vol},
     cloud="gcp",
 )
-def load_data_sql():
+def load_data_sql(data_dir: str = "data_sql"):
     from datasets import load_dataset
 
     dataset = load_dataset("b-mc2/sql-create-context")
 
     dataset_splits = {"train": dataset["train"]}
-    out_path = get_data_path()
+    out_path = get_data_path(data_dir)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
 

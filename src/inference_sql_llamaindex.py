@@ -36,6 +36,7 @@ class OpenLlamaLLM(CustomLLM, ClsMixin):
    
     def __init__(
         self, 
+        model_dir: str = "data_sql",
         max_new_tokens: int = 128,
         callback_manager: Optional[CallbackManager] = None,
         use_finetuned_model: bool = True,
@@ -48,7 +49,7 @@ class OpenLlamaLLM(CustomLLM, ClsMixin):
         from peft import PeftModel
         from transformers import LlamaForCausalLM, LlamaTokenizer
 
-        CHECKPOINT = get_model_path()
+        CHECKPOINT = get_model_path(model_dir)
 
         load_8bit = False
         device = "cuda"
@@ -133,7 +134,7 @@ class OpenLlamaLLM(CustomLLM, ClsMixin):
     network_file_systems={VOL_MOUNT_PATH.as_posix(): output_vol},
     cloud="gcp",
 )
-def run_query(query: str, use_finetuned_model: bool = True):
+def run_query(query: str, model_dir: str = "data_sql", use_finetuned_model: bool = True):
     """Run query."""
     import pandas as pd
     from sqlalchemy import create_engine
@@ -148,7 +149,7 @@ def run_query(query: str, use_finetuned_model: bool = True):
     # finetuned llama LLM
     num_output = 256
     llm = OpenLlamaLLM(
-        max_new_tokens=num_output, use_finetuned_model=use_finetuned_model
+        model_dir=model_dir, max_new_tokens=num_output, use_finetuned_model=use_finetuned_model
     )
     service_context = ServiceContext.from_defaults(llm=llm)
 
@@ -174,7 +175,7 @@ def run_query(query: str, use_finetuned_model: bool = True):
     return response
 
 @stub.local_entrypoint()
-def main(query: str, sqlite_file_path: str, use_finetuned_model: Optional[bool] = None):
+def main(query: str, sqlite_file_path: str, model_dir: str = "data_sql", use_finetuned_model: Optional[bool] = None):
     """Main function."""
 
     fp = open(sqlite_file_path, "rb")
@@ -182,7 +183,7 @@ def main(query: str, sqlite_file_path: str, use_finetuned_model: Optional[bool] 
 
     if use_finetuned_model is None:
         # try both
-        run_query.call(query, use_finetuned_model=True)
-        run_query.call(query, use_finetuned_model=False)
+        run_query.call(query, model_dir=model_dir, use_finetuned_model=True)
+        run_query.call(query, model_dir=model_dir, use_finetuned_model=False)
     else:
-        run_query.call(query, use_finetuned_model=use_finetuned_model)
+        run_query.call(query, model_dir=model_dir, use_finetuned_model=use_finetuned_model)

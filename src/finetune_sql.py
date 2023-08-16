@@ -228,10 +228,10 @@ def _train(
     cloud="oci",
     allow_cross_region_volumes=True,
 )
-def finetune(team_id: str = ""):
+def finetune(data_dir: str = "data_sql", model_dir: str = "data_sql"):
     from datasets import load_dataset
 
-    data_path = get_data_path().as_posix()
+    data_path = get_data_path(data_dir).as_posix()
     data = load_dataset("json", data_files=data_path)
 
     num_samples = len(data["train"])
@@ -242,9 +242,9 @@ def finetune(team_id: str = ""):
         MODEL_PATH,
         data,
         val_set_size=val_set_size,
-        output_dir=get_model_path().as_posix(),
+        output_dir=get_model_path(model_dir).as_posix(),
         wandb_project=WANDB_PROJECT,
-        wandb_run_name=f"openllama-{team_id}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",
+        wandb_run_name=f"openllama-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",
     )
 
     # Delete scraped data after fine-tuning
