@@ -1,0 +1,2 @@
+{"input": "How many heads of the departments are older than 56 ?", "context": "CREATE TABLE head (age INTEGER)"}
+{"input": "List the name, born state and age of the heads of departments ordered by age.", "context": "CREATE TABLE head (name VARCHAR, born_state VARCHAR, age VARCHAR)"}
