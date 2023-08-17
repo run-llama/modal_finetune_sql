@@ -50,7 +50,7 @@ openllama_image = (
     .pip_install("wandb==0.15.0")
 )
 
-stub = Stub(name="doppel-bot", image=openllama_image)
+stub = Stub(name="sql-finetune-bot", image=openllama_image)
 stub.model_dict = Dict.new()
 stub.data_dict = Dict.new()
 
