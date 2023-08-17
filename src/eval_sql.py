@@ -76,14 +76,14 @@ def run_evals_all(
     sample_data = data["train"].shuffle().select(range(num_samples))
 
     print('*** Running inference with finetuned model ***')
-    inputs_outputs_0 = run_evals.call(
+    inputs_outputs_0 = run_evals(
         sample_data=sample_data, 
         model_dir=model_dir, 
         use_finetuned_model=True
     )
 
     print('*** Running inference with base model ***')
-    input_outputs_1 = run_evals.call(
+    input_outputs_1 = run_evals(
         sample_data=sample_data, 
         model_dir=model_dir, 
         use_finetuned_model=False
@@ -102,28 +102,8 @@ def main(data_dir: str = "data_sql", model_dir: str = "data_sql", num_samples: i
         num_samples=num_samples
     )
     for idx, (row_dict, completion) in enumerate(inputs_outputs_0):
+        print('************ Row {idx} ************')
         print(f"Input {idx}: " + str(row_dict))
         print(f"Output {idx} (finetuned model): " + str(completion))
         print(f"Output {idx} (base model): " + str(input_outputs_1[idx][1]))
-
-    # print('*** Running inference with finetuned model ***')
-    # inputs_outputs_0 = run_evals.call(
-    #     data_dir=data_dir, 
-    #     model_dir=model_dir, 
-    #     num_samples=num_samples, 
-    #     use_finetuned_model=True
-    # )
-    # for row_dict, completion in inputs_outputs_0:
-    #     print("Input: " + str(row_dict))
-    #     print("Output: " + str(completion))
-
-    # print('*** Running inference with base model ***')
-    # input_outputs_1 = run_evals.call(
-    #     data_dir=data_dir, 
-    #     model_dir=model_dir, 
-    #     num_samples=num_samples, 
-    #     use_finetuned_model=False
-    # )
-    # for row_dict, completion in input_outputs_1:
-    #     print("Input: " + str(row_dict))
-    #     print("Output: " + str(completion))
+        print('***********************************')

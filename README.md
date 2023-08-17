@@ -17,7 +17,7 @@ This code is taken and adapted from the Modal `doppel-bot` repo: https://github.
 
 ### Steps for running
 
-Please see the notebook (TODO) for full instructions.
+Please see the notebook `tutorial.ipynb` for full instructions.
 
 In the meantime you can run each step individually as below:
 
