@@ -1,8 +1,4 @@
-from typing import Optional
-
-from modal import gpu, method, Retries
-from modal.cls import ClsMixin
-import json
+from modal import Retries
 
 from .common import (
     output_vol,
