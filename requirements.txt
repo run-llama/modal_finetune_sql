@@ -1,0 +1,4 @@
+modal-client==0.50.3044
+llama-index==0.8.2.post1
+datasets==2.14.4
+peft
