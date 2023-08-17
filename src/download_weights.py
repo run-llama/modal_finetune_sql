@@ -11,9 +11,9 @@ from pathlib import Path
     network_file_systems={VOL_MOUNT_PATH.as_posix(): output_vol},
     cloud="gcp"
 )
-def load_model():
+def load_model(model_dir: str = "data_sql"):
     """Load model."""
-    path = get_model_path()
+    path = get_model_path(model_dir=model_dir)
     config_path = path / "adapter_config.json"
     model_path = path / "adapter_model.bin"
 
@@ -28,9 +28,9 @@ def load_model():
         stub.model_dict["model"] = model_data
 
 @stub.local_entrypoint()
-def main(output_dir: str):
+def main(output_dir: str, model_dir: str = "data_sql"):
     # copy adapter_config.json and adapter_model.bin files into dict
-    load_model.call()
+    load_model.call(model_dir=model_dir)
     model_data = stub.model_dict["model"]
     config_data = stub.model_dict["config"]
 
