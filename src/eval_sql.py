@@ -1,8 +1,4 @@
-from typing import Optional
-
-from modal import gpu, method, Retries
-from modal.cls import ClsMixin
-import json
+from modal import Retries
 
 from .common import (
     output_vol,
@@ -102,7 +98,7 @@ def main(data_dir: str = "data_sql", model_dir: str = "data_sql", num_samples: i
         num_samples=num_samples
     )
     for idx, (row_dict, completion) in enumerate(inputs_outputs_0):
-        print('************ Row {idx} ************')
+        print(f'************ Row {idx} ************')
         print(f"Input {idx}: " + str(row_dict))
         print(f"Output {idx} (finetuned model): " + str(completion))
         print(f"Output {idx} (base model): " + str(input_outputs_1[idx][1]))

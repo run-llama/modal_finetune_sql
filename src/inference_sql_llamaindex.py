@@ -74,13 +74,15 @@ def run_query(query: str, model_dir: str = "data_sql", use_finetuned_model: bool
     )
     response = query_engine.query(query)
 
-    print(
-        f'Model output: \n'
-        f'SQL Query: {str(response.metadata["sql_query"])}'
-        f"Response: {response.response}"
-    )
-
     return response
+
+
+def print_response(response):
+    print(
+        f'*****Model output*****\n'
+        f'SQL Query: {str(response.metadata["sql_query"])}\n'
+        f"Response: {response.response}\n"
+    )
 
 @stub.local_entrypoint()
 def main(query: str, sqlite_file_path: str, model_dir: str = "data_sql", use_finetuned_model: str = "True"):
@@ -91,8 +93,11 @@ def main(query: str, sqlite_file_path: str, model_dir: str = "data_sql", use_fin
 
     if use_finetuned_model == "None":
         # try both
-        run_query.call(query, model_dir=model_dir, use_finetuned_model=True)
-        run_query.call(query, model_dir=model_dir, use_finetuned_model=False)
+        response_0 = run_query.call(query, model_dir=model_dir, use_finetuned_model=True)
+        print_response(response_0)
+        response_1 = run_query.call(query, model_dir=model_dir, use_finetuned_model=False)
+        print_response(response_1)
     else:
         bool_toggle = use_finetuned_model == "True"
-        run_query.call(query, model_dir=model_dir, use_finetuned_model=bool_toggle)
+        response = run_query.call(query, model_dir=model_dir, use_finetuned_model=bool_toggle)
+        print_response(response)

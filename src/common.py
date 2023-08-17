@@ -13,7 +13,7 @@ MODEL_PATH = "/model"
 def download_models():
     from transformers import LlamaForCausalLM, LlamaTokenizer
 
-    model_name = "openlm-research/open_llama_7b"
+    model_name = "openlm-research/open_llama_7b_v2"
 
     model = LlamaForCausalLM.from_pretrained(model_name)
     model.save_pretrained(MODEL_PATH)
