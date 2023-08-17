@@ -1,6 +1,6 @@
 # Finetuning LLaMa + Text-to-SQL 
 
-This walkthrough shows you how to fine-tune LLaMa-7B on a Text-to-SQL dataset, and then use it for inference against
+This walkthrough shows you how to fine-tune LLaMa 2 7B on a Text-to-SQL dataset, and then use it for inference against
 any database of structured data using LlamaIndex.
 
 

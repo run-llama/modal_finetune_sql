@@ -247,5 +247,5 @@ def finetune(data_dir: str = "data_sql", model_dir: str = "data_sql"):
         wandb_run_name=f"openllama-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",
     )
 
-    # Delete scraped data after fine-tuning
-    os.remove(data_path)
+    # # Delete scraped data after fine-tuning
+    # os.remove(data_path)
