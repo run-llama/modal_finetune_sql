@@ -15,9 +15,22 @@ This code is taken and adapted from the Modal `doppel-bot` repo: https://github.
 - Peft
 
 
-### Steps for running
+### Setup
 
-Please see the notebook `tutorial.ipynb` for full instructions.
+To get started, clone or fork this repo:
+
+```bash
+git clone https://github.com/run-llama/modal_finetune_sql.git
+```
+
+### Steps for Running
+
+Please load the notebook `tutorial.ipynb` for full instructions.
+
+```bash
+cd modal_finetune_sql
+jupyter notebook tutorial.ipynb
+```
 
 In the meantime you can run each step individually as below:
 
