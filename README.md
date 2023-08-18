@@ -3,6 +3,7 @@
 This walkthrough shows you how to fine-tune LLaMa 2 7B on a Text-to-SQL dataset, and then use it for inference against
 any database of structured data using LlamaIndex.
 
+Check out our full blog here: https://medium.com/llamaindex-blog/easily-finetune-llama-2-for-your-text-to-sql-applications-ecd53640e10d
 
 This code is taken and adapted from the Modal `doppel-bot` repo: https://github.com/modal-labs/doppel-bot.
 
