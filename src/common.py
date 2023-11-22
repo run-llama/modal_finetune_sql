@@ -35,7 +35,7 @@ openllama_image = (
         "accelerate==0.18.0",
         "bitsandbytes==0.37.0",
         "bitsandbytes-cuda117==0.26.0.post2",
-        "datasets==2.10.1",
+        "datasets>=2.15.0",
         "fire==0.5.0",
         "gradio==3.23.0",
         "peft @ git+https://github.com/huggingface/peft.git@e536616888d51b453ed354a6f1e243fecb02ea08",
@@ -58,7 +58,7 @@ output_vol = NetworkFileSystem.new(cloud="gcp").persisted("doppelbot-vol")
 
 
 def generate_prompt_sql(input, context, output=""):
-    return f"""You are a powerful text-to-SQL model. Your job is to answer questions about a database. You are given a question and context regarding one or more tables. 
+    return f"""You are a powerful text-to-SQL model. Your job is to answer questions about a database. You are given a question and context regarding one or more tables.
 
 You must output the SQL query that answers the question.
 
